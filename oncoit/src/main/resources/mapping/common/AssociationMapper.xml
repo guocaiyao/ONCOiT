@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.oncoit.mapper.AssociationMapper">
+
+    <sql id="Base_Column_List">
+        id,Disease_name,Treatment,Control,Biomarker_child,Target,Research_type,Bodysite,pmid
+    </sql>
+<!--    <sql id="Base_Column_List">-->
+<!--        id,pmid,Research_type,Sample,Sample_name,Disease_name,EFO,-->
+<!--        Bodysite,Target,Treatment,Control,Drugs,Size_of_treatment_group,-->
+<!--        Size_of_control_group,Design,Prognosis,Efficacy,Adverse_event,-->
+<!--        Cell_based_evidence,Animal_model_based_evidence,Biomarker_parent,-->
+<!--        Biomarker_child,Pub_date,Pub_title,Joural_name,Abstract-->
+<!--    </sql>-->
+
+    <select id="selectListGroupByPosition" resultType="com.oncoit.vo.Record">
+        SELECT Bodysite,count(0) num from oncoit_core_table GROUP by Bodysite
+    </select>
+    <select id="count" resultType="java.lang.Integer">
+        select count(0) from oncoit_core_table
+    </select>
+
+    <select id="selectByqueryName" resultType="com.oncoit.pojo.Association">
+        select <include refid="Base_Column_List"></include> from oncoit_core_table
+        <where>
+            <if test="bodysite !=null and bodysite.trim() !=''">
+                AND (oncoit_core_table.Bodysite LIKE CONCAT("%",#{bodysite},"%"))
+            </if>
+            <if test="diseaseName !=null and diseaseName.trim() !=''">
+                AND (oncoit_core_table.Disease_name LIKE CONCAT("%",#{diseaseName},"%"))
+            </if>
+            <if test="drugName !=null and drugName.trim() !=''">
+                AND (oncoit_core_table.Drugs LIKE CONCAT("%",#{drugName},"%"))
+            </if>
+            <if test="biomarkerName !=null and biomarkerName.trim() !=''">
+                AND (oncoit_core_table.Biomarker_child LIKE CONCAT("%",#{biomarkerName},"%"))
+            </if>
+            <if test="targetName !=null and targetName.trim() !=''">
+                AND (oncoit_core_table.Target LIKE CONCAT("%",#{targetName},"%"))
+            </if>
+        </where>
+        Order by oncoit_core_table.id DESC
+    </select>
+
+</mapper>
